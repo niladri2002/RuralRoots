@@ -1,5 +1,5 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React,{useEffect,useState} from "react";
+import { BrowserRouter as Router, Routes, Route,Navigate } from "react-router-dom";
 import Home from "./Home";
 import About from "./About";
 import Products from "./Products";
@@ -11,6 +11,9 @@ import { GlobalStyle } from "./GlobalStyle";
 import { ThemeProvider } from "styled-components";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import Login from './Login';
+import Signup from './Signup';
+import axios from "axios";
 
 const App = () => {
   const theme = {
@@ -40,9 +43,59 @@ const App = () => {
 
 
 
+  const [loggedIn, setLoggedIn] = useState(false);
+  var token = ""
+  
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogin = (token) => {
+    localStorage.setItem('token', token);
+    
+    setLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    
+    localStorage.removeItem('token');
+    console.log(token)
+    setLoggedIn(false);
+   return <Navigate to="/" />;
+  };
+
+  const handleSignup = async (username, password, email, confirmpassword) => {
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/account/register/', {
+          username: username,
+          email: email,
+          password: password,
+          password2: confirmpassword
+      });
+
+      // Assuming registration is successful and navigates to the home page
+      token = response.data.token
+      console.log(response.data)
+      localStorage.setItem('token', token);
+      console.log('Registration successful');
+
+  } catch (error) {
+      console.error('Error:', error);
+    }
+    console.log('Signed up:', { username, password, email, confirmpassword });
+    setLoggedIn(true);
+    // Redirect to login page after signup
+     <Navigate to="/" />;
+  };
+
+
+
   return (<ThemeProvider theme={theme}>
   <Router>
-   <Header /> 
+   <Header onLogout={handleLogout}/> 
   <GlobalStyle />
   <Routes>
     <Route path="/" element={<Home />} />
@@ -51,7 +104,15 @@ const App = () => {
     <Route path="/contact" element={<Contact />} />
     <Route path="/singleproduct/:id" element={<SingleProduct />} />
     <Route path="/cart" element={<Cart />} />
-    <Route path="*" element={<ErrorPage />} />  
+    <Route path="*" element={<ErrorPage />} /> 
+    <Route
+            path="/login"
+            element={<Login onLogin={handleLogin} />}
+          />
+          <Route
+            path="/signup"
+            element={<Signup onSignup={(username, password, email, confirmpassword) => handleSignup(username, password, email, confirmpassword)} />}
+          /> 
   </Routes>
   <Footer />
 </Router>

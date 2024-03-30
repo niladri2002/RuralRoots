@@ -3,14 +3,14 @@ import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 import Nav from "./Nav";
 
-const Header = () => {
+const Header = ({ onLogout }) => {
   return (
     <MainHeader>
       <NavLink to="/">
        
         <img src="./images/logo.jpg" alt="my logo img" />
       </NavLink>
-      <Nav />
+      <Nav onLogout={onLogout}/>
     </MainHeader>
   );
 };

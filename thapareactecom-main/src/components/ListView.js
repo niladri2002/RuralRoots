@@ -3,6 +3,8 @@ import styled from "styled-components";
 import FormatPrice from "../Helpers/FormatPrice";
 import { Button } from "../styles/Button";
 
+const MEDIA_URL = "http://127.0.0.1:8000"
+
 const ListView = ({ products }) => {
   return (
     <Wrapper className="section">
@@ -12,7 +14,7 @@ const ListView = ({ products }) => {
           return (
             <div className="card grid grid-two-column">
               <figure>
-                <img src={image} alt={name} />
+              <img src={`${MEDIA_URL}${image}`} alt={name} />
               </figure>
 
               <div className="card-data">

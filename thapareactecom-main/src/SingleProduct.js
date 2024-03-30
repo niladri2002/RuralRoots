@@ -11,29 +11,27 @@ import { TbTruckDelivery, TbReplace } from "react-icons/tb";
 import Star from "./components/Star";
 import AddToCart from "./components/AddToCart";
 
-const API = "https://api.pujakaitem.com/api/products";
+const API = "http://127.0.0.1:8000/products/product";
+const MEDIA_URL = "http://127.0.0.1:8000"
 
 const SingleProduct = () => {
   const { getSingleProduct, isSingleLoading, singleProduct } =
     useProductContext();
 
   const { id } = useParams();
+  var stars=4
 
   const {
     id: alias,
     name,
-    company,
     price,
     description,
-    category,
-    stock,
-    stars,
-    reviews,
+    tag,
     image,
   } = singleProduct;
 
   useEffect(() => {
-    getSingleProduct(`${API}?id=${id}`);
+    getSingleProduct(`${API}/${id}`);
   }, []);
 
   if (isSingleLoading) {
@@ -42,26 +40,33 @@ const SingleProduct = () => {
 
   return (
     <Wrapper>
-      <PageNavigation title={name} />
+      <PageNavigation title={singleProduct.name}/>
       <Container className="container">
         <div className="grid grid-two-column">
           {/* product Images  */}
           <div className="product_images">
-            <MyImage imgs={image} />
-          </div>
+          <Wrapper2>
+            {/* 2nd column  */}
+
+            <div className="main-screen">
+              <img src={`${MEDIA_URL}${image}`}/>  
+            </div>
+          </Wrapper2>
+        </div>
 
           {/* product dAta  */}
           <div className="product-data">
             <h2>{name}</h2>
-            <Star stars={stars} reviews={reviews} />
+            <Star stars={stars} reviews={"Very Good Product"} />
             <p className="product-data-price">
               MRP:
               <del>
-                <FormatPrice price={price + 250000} />
+                {parseFloat(price)+50}
               </del>
             </p>
             <p className="product-data-price product-data-real-price">
-              Deal of the Day: <FormatPrice price={price} />
+              Deal of the Day: {parseFloat(price)} 
+              {/* {price} */}
             </p>
             <p>{description}</p>
             <div className="product-data-warranty">
@@ -87,19 +92,22 @@ const SingleProduct = () => {
             </div>
 
             <div className="product-data-info">
-              <p>
-                Available:
+              {/* <p>
+                
                 <span> {stock > 0 ? "In Stock" : "Not Available"}</span>
-              </p>
+              </p> */}
+              <p>
+              Available:<span>In Stock</span></p>
               <p>
                 ID : <span> {id} </span>
               </p>
-              <p>
+              {/* <p>
                 Brand :<span> {company} </span>
-              </p>
+              </p> */}
             </div>
             <hr />
-            {stock > 0 && <AddToCart product={singleProduct} />}
+            {/* {stock > 0 && <AddToCart product={singleProduct} />} */}
+            <AddToCart product={singleProduct} />
           </div>
         </div>
       </Container>
@@ -189,6 +197,56 @@ const Wrapper = styled.section`
   }
   @media (max-width: ${({ theme }) => theme.media.mobile}) {
     padding: 0 2.4rem;
+  }
+`;
+
+const Wrapper2 = styled.section`
+  display: grid;
+  grid-template-columns: 0.4fr 1fr;
+  gap: 1rem;
+
+  .grid {
+    flex-direction: row;
+    justify-items: center;
+    align-items: center;
+    width: 100%;
+    gap: 1rem;
+    /* order: 2; */
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      background-size: cover;
+      object-fit: contain;
+      cursor: pointer;
+      box-shadow: ${({ theme }) => theme.colors.shadow};
+    }
+  }
+
+  .main-screen {
+    display: grid;
+    place-items: center;
+    order: 1;
+    img {
+      max-width: 100%;
+      height: auto;
+      box-shadow: ${({ theme }) => theme.colors.shadow};
+    }
+  }
+  .grid-four-column {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 1fr);
+  }
+
+  @media (max-width: ${({ theme }) => theme.media.mobile}) {
+    display: flex;
+    flex-direction: column;
+    order: 1;
+
+    .grid-four-column {
+      grid-template-rows: 1fr;
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
 `;
 

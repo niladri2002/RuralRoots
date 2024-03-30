@@ -1,13 +1,32 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
-import { FiShoppingCart } from "react-icons/fi";
+import { FiShoppingCart, FiUser } from "react-icons/fi";
 import { CgMenu, CgClose } from "react-icons/cg";
 
-const Nav = () => {
-  const [menuIcon, setMenuIcon] = useState();
+import axios from "axios";
+
+const Nav = ({ onLogout }) => {
+  const [menuIcon, setMenuIcon] = useState(false);
+  const [userDropdown, setUserDropdown] = useState(false);
 
   const Nav = styled.nav`
+  .dropdown {
+    position: absolute;
+    top: 100%; /* Place the dropdown below the user icon */
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .dropdown-item {
+    text-decoration: none;
+    color: #333;
+    padding: 5px 0;
+    display: block; /* Display items as block-level elements */
+  }
+  
     .navbar-lists {
       display: flex;
       gap: 4.8rem;
@@ -161,6 +180,29 @@ const Nav = () => {
     }
   `;
 
+
+
+  const handleLogout = () => {
+    const token = localStorage.getItem('token');
+    
+    const logout = async () => {
+      try {
+        const response = await axios.post('http://127.0.0.1:8000/sccount/logout',
+        {
+          headers: {
+            Authorization: `Token ${token}`
+          }
+        });
+  
+    } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    onLogout();
+  };
+
+
   return (
     <Nav>
       <div className={menuIcon ? "navbar active" : "navbar"}>
@@ -168,45 +210,79 @@ const Nav = () => {
           <li>
             <NavLink
               to="/"
-              className="navbar-link "
-              onClick={() => setMenuIcon(false)}>
+              className="navbar-link"
+              onClick={() => setMenuIcon(false)}
+            >
               Home
             </NavLink>
           </li>
           <li>
             <NavLink
               to="/about"
-              className="navbar-link "
-              onClick={() => setMenuIcon(false)}>
+              className="navbar-link"
+              onClick={() => setMenuIcon(false)}
+            >
               About
             </NavLink>
           </li>
           <li>
             <NavLink
               to="/products"
-              className="navbar-link "
-              onClick={() => setMenuIcon(false)}>
+              className="navbar-link"
+              onClick={() => setMenuIcon(false)}
+            >
               Products
             </NavLink>
           </li>
           <li>
             <NavLink
               to="/contact"
-              className="navbar-link "
-              onClick={() => setMenuIcon(false)}>
+              className="navbar-link"
+              onClick={() => setMenuIcon(false)}
+            >
               Contact
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/cart"
+              className="navbar-link cart-trolley--link"
+              onClick={() => setMenuIcon(false)}
+            >
+              <FiShoppingCart className="cart-trolley" />
+              <span className="cart-total--item">10</span>
             </NavLink>
           </li>
           
           <li>
-            <NavLink to="/cart" className="navbar-link cart-trolley--link">
-              <FiShoppingCart className="cart-trolley" />
-              <span className="cart-total--item"> 10 </span>
-            </NavLink>
+            <div
+              className="user-icon"
+              onClick={() => setUserDropdown(!userDropdown)}
+            >
+              <FiUser className="user-icon" />
+              {userDropdown && (
+                <div className="dropdown">
+                  <NavLink
+                    to="/login"
+                    className="dropdown-item"
+                    onClick={() => setMenuIcon(false)}
+                  >
+                    Login
+                  </NavLink>
+                  <NavLink
+                    to="/signup"
+                    className="dropdown-item"
+                    onClick={() => setMenuIcon(false)}
+                  >
+                    Signup
+                  </NavLink>
+                  <button onClick={handleLogout}>Logout</button>
+                </div>
+              )}
+            </div>
           </li>
         </ul>
 
-        {/* two button for open and close of menu */}
         <div className="mobile-navbar-btn">
           <CgMenu
             name="menu-outline"

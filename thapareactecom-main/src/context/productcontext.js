@@ -15,9 +15,7 @@ const initialState = {
   singleProduct: {},
 };
 
-const axiosInstance = axios.create({
-  withCredentials: false
-});
+
 
 const AppProvider = ({ children }) => {
   
@@ -26,10 +24,10 @@ const AppProvider = ({ children }) => {
   const getProducts = async (url) => {
     dispatch({ type: "SET_LOADING" });
     try {
-      const res = await axios.get(url);
+      const res = await axios.get('http://127.0.0.1:8000/products/list/');
       const products = await res.data;
       dispatch({ type: "SET_API_DATA", payload: products });
-      console.log("products:",products);
+      //console.log("products:",products);
     } catch (error) {
       dispatch({ type: "API_ERROR" });
     }
@@ -40,8 +38,10 @@ const AppProvider = ({ children }) => {
   const getSingleProduct = async (url) => {
     dispatch({ type: "SET_SINGLE_LOADING" });
     try {
+      console.log("url=",url)
       const res = await axios.get(url);
       const singleProduct = await res.data;
+      console.log(singleProduct);
       dispatch({ type: "SET_SINGLE_PRODUCT", payload: singleProduct });
     } catch (error) {
       dispatch({ type: "SET_SINGLE_ERROR" });

@@ -4,11 +4,39 @@ import { FaCheck } from "react-icons/fa";
 import CartAmountToggle from "./CartAmountToggle";
 import { NavLink } from "react-router-dom";
 import { Button } from "../styles/Button";
+import { useCartContext } from "../context/cart_context";
+import axios from "axios";
+
+const API = "http://127.0.0.1:8000/add-to-cart/";
 
 const AddToCart = ({ product }) => {
-  const { id, colors, stock } = product;
+  const { addToCart } = useCartContext();
+  const token = localStorage.getItem('token');
 
-  const [color, setColor] = useState(colors[0]);
+  const addCart=async(id)=>{
+    console.log("from addtocart",token);
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/products/add-to-cart/', {
+          product_id: product.id
+      },
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log(response.data)
+
+  } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+  // const { id, colors, stock } = product;
+  const{id,price}=product;
+  var stock=5
+
+  // const [color, setColor] = useState(colors[0]);
   const [amount, setAmount] = useState(1);
 
   const setDecrease = () => {
@@ -21,7 +49,7 @@ const AddToCart = ({ product }) => {
 
   return (
     <Wrapper>
-      <div className="colors">
+      {/* <div className="colors">
         <p>
           Color:
           {colors.map((curColor, index) => {
@@ -36,7 +64,7 @@ const AddToCart = ({ product }) => {
             );
           })}
         </p>
-      </div>
+      </div> */}
 
       {/* add to cart  */}
       <CartAmountToggle
@@ -45,7 +73,7 @@ const AddToCart = ({ product }) => {
         setIncrease={setIncrease}
       />
 
-      <NavLink to="/cart">
+      <NavLink to="/cart" onClick={addCart}>
         <Button className="btn">Add To Cart</Button>
       </NavLink>
     </Wrapper>

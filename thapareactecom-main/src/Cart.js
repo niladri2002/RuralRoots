@@ -1,7 +1,57 @@
+import React from "react";
 import styled from "styled-components";
+import { useCartContext } from "./context/cart_context";
+import CartItem from "./components/CartItem";
+
+import axios from "axios";
 
 const Cart = () => {
-  return <Wrapper></Wrapper>;
+  const { cart } = useCartContext();
+
+  const [cartProducts, setCartProducts] = React.useState([]);
+  const token = localStorage.getItem('token');
+
+    React.useEffect(() => {
+        // Make API call to get cart products
+        const fetchCartProducts = async () => {
+            try {
+                const response = await axios.get('http://127.0.0.1:8000/products/user-cart-products/',
+                {
+                  headers: {
+                    Authorization: `Token ${token}`,
+                    'Content-Type': 'application/json'
+                  }
+                });
+                console.log(response.data)
+                setCartProducts(response.data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        fetchCartProducts(); // Call the fetchCartProducts function when the component mounts
+    }, []); // Empty dependency array to ensure the effect runs only once
+  
+  console.log("🚀 ~ file: Cart.js ~ line 6 ~ Cart ~ cart", cart);
+  return <Wrapper>
+    <div className="container">
+        <div className="cart_heading grid grid-five-column">
+          <p>Item</p>
+          <p className="cart-hide">Price</p>
+          <p>Quantity</p>
+          <p className="cart-hide">Subtotal</p>
+          <p>Remove</p>
+        </div>
+        <hr />
+
+        <div className="cart-item">
+          {cartProducts.map((curElem) => {
+            return <CartItem key={curElem.product.id} {...curElem} />;
+          })}
+        </div>
+        </div>
+    
+  </Wrapper>;
 };
 
 const Wrapper = styled.section`
