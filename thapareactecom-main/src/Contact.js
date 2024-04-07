@@ -63,7 +63,15 @@ const Contact = () => {
             <input
               type="email"
               name="Email"
-              placeholder="Email"
+              placeholder="Your email"
+              autoComplete="off"
+              required
+            />
+
+            <input
+              type="email"
+              name="Email"
+              placeholder="Shopkeeper's email"
               autoComplete="off"
               required
             />

@@ -26,6 +26,7 @@ const AppProvider = ({ children }) => {
     try {
       const res = await axios.get('http://127.0.0.1:8000/products/list/');
       const products = await res.data;
+      console.log(products)
       dispatch({ type: "SET_API_DATA", payload: products });
       //console.log("products:",products);
     } catch (error) {

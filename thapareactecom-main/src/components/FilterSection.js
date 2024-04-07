@@ -32,17 +32,7 @@ function FilterSection() {
   return (
     <Wrapper>
     <div>
-        <div className="filter-search">
-        <form onSubmit={(e) => e.preventDefault()}>
-          <input
-            type="text"
-            name="text"
-            placeholder="Search"
-            value={text}
-            onChange={updateFilterValue}
-          />
-        </form>
-      </div>
+        
 
     </div>
     </Wrapper>

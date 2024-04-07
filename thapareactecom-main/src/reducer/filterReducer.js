@@ -92,6 +92,7 @@ const filterReducer = (state, action) => {
   
       case "UPDATE_FILTERS_VALUE":
         const { name, value } = action.payload;
+        console.log("Here",name,value)
   
         return {
           ...state,

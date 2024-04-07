@@ -1,14 +1,64 @@
 import React from "react";
 import styled from "styled-components";
 import Product from "./Product";
+import axios from "axios";
 
 const GridView = ({ products }) => {
+  console.log("GridView",products)
+  const [query, setQuery] = React.useState('');
+  const [filteredProducts, setFilteredProducts] = React.useState([]);
+
+  React.useEffect(() => {
+    setFilteredProducts(products); // Initialize filteredProducts with initial products
+  }, [products]);
+
+  const getProducts = async (query) => {
+
+    try {
+      const res = await axios.get(`http://127.0.0.1:8000/products/list/?keyword=${query}`);
+      const data = res.data;
+      console.log(data)
+      setFilteredProducts(data);
+    } catch (error) {
+      console.error("error")
+    }
+  };
+
+  const handleChange = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Call the onSearch callback with the query
+    getProducts(query)
+  };
+
   return (
     <Wrapper className="section">
-      <div className="container grid grid-three-column">
-        {products.map((curElem) => {
-          return <Product key={curElem.id} {...curElem} />;
-        })}
+      <form onSubmit={handleSubmit} style={{'position': "relative", top: '-15vh', left: '-23vw'}}>
+      <input
+        type="text"
+        placeholder="Search..."
+        value={query}
+        onChange={handleChange}
+        style={{'marginInline': '9px'}}
+      />
+      <button type="submit">Search</button>
+    </form>
+      <div className="container">
+        {filteredProducts.map((shop) => (
+          <div key={shop.id}>
+            <h2>{shop.name}</h2>
+            <br></br>
+            <div className="grid grid-three-column">
+              {shop.products.map((product) => (
+                <Product key={product.id} {...product} />
+              ))}
+            </div>
+            <hr /> {/* Draw a line to differentiate between shops */}
+          </div>
+        ))}
       </div>
     </Wrapper>
   );
